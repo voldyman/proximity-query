@@ -34,7 +34,7 @@ func run() error {
 	})
 }
 
-func createSearchQuery() *proximity.ProximityQuery {
+func createSearchQuery() *proximity.Query {
 	query := bluge.NewMatchQuery("quick fox").SetField("text")
 
 	return proximity.NewProximityQuery().AddSubquery(query)

@@ -31,7 +31,7 @@ func TestProximityOrdering(t *testing.T) {
 	defer os.RemoveAll(indexPath)
 
 	// Search using proximity scorer, words closer together should be ranked higher
-	query := createSearchQuery().SetScorer(NewProximityCompositeScorer())
+	query := createSearchQuery().SetScorer(NewCompositeScorer())
 	id0Doc, id1Doc := searchDocMatches(t, r, query)
 	if id1Doc.Score <= id0Doc.Score {
 		// doc 0: "_quick_ brown scared _fox_"
@@ -73,7 +73,8 @@ func searchDocMatches(t failureReporter, r *bluge.Reader, q bluge.Query) (search
 	}
 	return *id0Doc.m, *id1Doc.m
 }
-func createSearchQuery() *ProximityQuery {
+
+func createSearchQuery() *Query {
 	query := bluge.NewMatchQuery("quick fox").SetField("text")
 
 	return NewProximityQuery().AddSubquery(query)
@@ -101,7 +102,7 @@ func BenchmarkProximityCompositeScorer(b *testing.B) {
 	defer r.Close()
 	defer os.RemoveAll(indexPath)
 
-	query := createSearchQuery().SetScorer(NewProximityCompositeScorer())
+	query := createSearchQuery().SetScorer(NewCompositeScorer())
 	for i := 0; i < b.N; i++ {
 		searchDocMatches(b, r, query)
 	}
